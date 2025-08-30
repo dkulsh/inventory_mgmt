@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Placeholder</title>
+</head>
+<body>
+    <canvas id="canvas" width="40" height="40"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Fill background
+        ctx.fillStyle = '#f0f0f0';
+        ctx.fillRect(0, 0, 40, 40);
+        
+        // Draw plus sign
+        ctx.fillStyle = '#999999';
+        ctx.fillRect(18, 8, 4, 24);  // Vertical line
+        ctx.fillRect(8, 18, 24, 4);  // Horizontal line
+        
+        // Convert to PNG and download
+        const link = document.createElement('a');
+        link.download = 'placeholder.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    </script>
+</body>
+</html> 
