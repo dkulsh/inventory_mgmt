@@ -108,7 +108,7 @@ async function loadTenants(selectElement, selectedTenantId = null) {
             }
         }
     } catch (error) {
-        showToast('Failed to load tenants', false);
+        showToast('Error', 'Failed to load tenants', 'error');
     }
 }
 
@@ -315,31 +315,43 @@ function formatTax(type, amount) {
 
 // Show toast notification
 function showToast(title, message, type = 'success') {
-    const toast = document.getElementById('toast');
-    const toastTitle = document.getElementById('toastTitle');
-    const toastMessage = document.getElementById('toastMessage');
-    const toastIcon = toast.querySelector('.bi');
+    // Convert type to success boolean for compatibility with Products page format
+    const success = type === 'success';
     
-    // Set icon based on type
-    toastIcon.className = `bi ${type === 'success' ? 'bi-check-circle-fill text-success' : 'bi-exclamation-circle-fill text-danger'}`;
-    
-    // Set content
-    toastTitle.textContent = title;
-    toastMessage.textContent = message;
-    
-    // Show toast
+    let toast = document.getElementById('globalToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'globalToast';
+        toast.className = `toast align-items-center text-white bg-${success ? 'success' : 'danger'} border-0 position-fixed bottom-0 end-0 m-4`;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+        toast.style.zIndex = '3000';
+        toast.style.minWidth = '200px';
+        
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">${message}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+        document.body.appendChild(toast);
+    } else {
+        toast.querySelector('.toast-body').textContent = message;
+        toast.className = `toast align-items-center text-white bg-${success ? 'success' : 'danger'} border-0 position-fixed bottom-0 end-0 m-4`;
+    }
     const bsToast = new bootstrap.Toast(toast);
     bsToast.show();
 }
 
 // Show error notification
 function showError(message) {
-    showToast(message, false);
+    showToast('Error', message, 'error');
 }
 
 // Show success notification
 function showSuccess(message) {
-    showToast(message, true);
+    showToast('Success', message, 'success');
 }
 
 // Show status update modal

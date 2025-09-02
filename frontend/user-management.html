@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Inventory Management</title>
+    <title>User Management - Inventory Management</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -37,13 +37,13 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link d-flex align-items-center active" href="#" id="adminPanelToggle">
+                <a class="nav-link d-flex align-items-center" href="#" id="adminPanelToggle">
                     <i class="bi bi-gear me-2"></i> Admin Panel
                     <i class="bi bi-chevron-down ms-auto" id="adminPanelIcon"></i>
                 </a>
-                <ul class="nav flex-column gap-1 ms-3" id="adminSubmenu">
+                <ul class="nav flex-column gap-1 ms-3" id="adminSubmenu" style="display: none;">
                     <li class="nav-item">
-                        <a class="nav-link d-flex align-items-center" href="user-management.html">
+                        <a class="nav-link d-flex align-items-center active" href="user-management.html">
                             <i class="bi bi-people me-2"></i> User Management
                         </a>
                     </li>
@@ -72,23 +72,15 @@
         <div class="container-fluid p-4">
             <div class="row mb-4">
                 <div class="col">
-                    <h4 class="mb-0">Admin Panel</h4>
-                    <p class="text-muted">Select an option from the sidebar to get started</p>
+                    <h4 class="mb-0">User Management</h4>
+                    <p class="text-muted">Manage users and their permissions</p>
                 </div>
             </div>
 
-            <!-- Navigation Cards -->
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body text-center">
-                            <i class="bi bi-people text-primary" style="font-size: 3rem;"></i>
-                            <h5 class="card-title mt-3">User Management</h5>
-                            <p class="card-text">Manage users and their permissions across the system.</p>
-                            <a href="user-management.html" class="btn btn-primary">Go to User Management</a>
-                        </div>
-                    </div>
-                </div>
+            <!-- Content will be added here later -->
+            <div class="text-center text-muted mt-5">
+                <i class="bi bi-people" style="font-size: 3rem;"></i>
+                <p class="mt-3">User Management content will be added here</p>
             </div>
         </div>
     </div>
@@ -99,4 +91,5 @@
 <!-- Custom JavaScript -->
 <script src="js/sidebar.js"></script>
 </body>
-</html> 
+</html>
+

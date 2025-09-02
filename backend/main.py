@@ -8,9 +8,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Define static directory path
-static_dir = os.path.join(os.path.dirname(__file__), "static")
-
 app = FastAPI(title="Warehouse Inventory Management System")
 
 # CORS (adjust origins as needed)
@@ -33,17 +30,8 @@ app.include_router(businesses.router, prefix="/api/v1/businesses", tags=["Busine
 def health_check():
     return {"status": "ok"}
 
-# Root route - serve login page
-@app.get("/")
-async def root():
-    return FileResponse(os.path.join(static_dir, "login.html"))
-
-# Products page route
-@app.get("/products")
-async def products_page():
-    return FileResponse(os.path.join(static_dir, "products.html"))
-
 # Serve static files (frontend) - mount AFTER API routes
+static_dir = os.path.join(os.path.dirname(__file__), "static")
 if os.path.exists(static_dir):
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 

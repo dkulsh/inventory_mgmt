@@ -1,8 +1,3 @@
-# Virtual Environment
-venv/
-env/
-ENV/
-
 # Python
 __pycache__/
 *.py[cod]
@@ -24,6 +19,14 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
 
 # Environment variables
 .env
@@ -48,14 +51,35 @@ wheels/
 ehthumbs.db
 Thumbs.db
 
-# Logs
-*.log
-logs/
-
 # Database
 *.db
 *.sqlite3
 
-# Temporary files
-*.tmp
-*.temp
+# Logs
+*.log
+logs/
+
+# Cache
+.cache/
+.pytest_cache/
+
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+.hypothesis/
+
+# Alembic
+alembic/versions/*.pyc
+alembic/__pycache__/
+
+# Service account files
+service-account.json
+*.json
+!package.json
+!package-lock.json
+
+# Cursor
+.cursor/

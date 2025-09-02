@@ -50,6 +50,35 @@ body {
     color: white;
 }
 
+/* Expandable submenu styles */
+.sidebar .nav-link {
+    position: relative;
+}
+
+.sidebar .nav-link #adminPanelIcon {
+    transition: transform 0.2s ease;
+}
+
+.sidebar #adminSubmenu {
+    transition: all 0.3s ease;
+}
+
+.sidebar #adminSubmenu .nav-link {
+    padding-left: 2rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.sidebar #adminSubmenu .nav-link:hover {
+    background-color: var(--background-color);
+    color: var(--primary-color);
+}
+
+.sidebar #adminSubmenu .nav-link.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
     color: var(--text-primary);

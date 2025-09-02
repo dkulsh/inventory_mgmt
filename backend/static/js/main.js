@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (response.ok) {
                     const data = await response.json();
                     localStorage.setItem('access_token', data.access_token);
-                    window.location.href = '/products';
+                    window.location.href = 'products.html';
                 } else {
                     const err = await response.json();
                     loginError.textContent = err.detail || 'Invalid credentials';
@@ -103,7 +103,7 @@ async function fetchAndRenderProducts(search = '') {
     try {
         const res = await fetch(url, { headers: authHeaders() });
         if (res.status === 401) {
-            window.location.href = '/';
+            window.location.href = 'login.html';
             return;
         }
         const products = await res.json();
@@ -518,18 +518,25 @@ function showToast(msg, success=true) {
     if (!toast) {
         toast = document.createElement('div');
         toast.id = 'globalToast';
-        toast.innerHTML = `<div class="toast align-items-center text-white bg-${success ? 'success' : 'danger'} border-0 position-fixed bottom-0 end-0 m-4" role="alert" aria-live="assertive" aria-atomic="true" style="z-index:3000;min-width:200px;">
+        toast.className = `toast align-items-center text-white bg-${success ? 'success' : 'danger'} border-0 position-fixed bottom-0 end-0 m-4`;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+        toast.style.zIndex = '3000';
+        toast.style.minWidth = '200px';
+        
+        toast.innerHTML = `
             <div class="d-flex">
                 <div class="toast-body">${msg}</div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
-        </div>`;
+        `;
         document.body.appendChild(toast);
     } else {
         toast.querySelector('.toast-body').textContent = msg;
         toast.className = `toast align-items-center text-white bg-${success ? 'success' : 'danger'} border-0 position-fixed bottom-0 end-0 m-4`;
     }
-    const bsToast = new bootstrap.Toast(toast.querySelector('.toast'));
+    const bsToast = new bootstrap.Toast(toast);
     bsToast.show();
 }
 
@@ -556,7 +563,7 @@ function logout() {
     localStorage.removeItem('user_role');
     localStorage.removeItem('tenant_id');
     localStorage.removeItem('business_id');
-    window.location.href = '/';
+    window.location.href = 'login.html';
 }
 
 
