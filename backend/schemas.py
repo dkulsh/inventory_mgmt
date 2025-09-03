@@ -162,3 +162,47 @@ class OrderStatusUpdate(BaseModel):
 
     class Config:
         orm_mode = True
+
+# User Management Schemas
+class UserCreate(BaseModel):
+    TenantId: int
+    BusinessId: Optional[int] = None
+    Role: str
+    UserName: str
+    Password: str
+    Name: str
+    AddressLine1: Optional[str] = None
+    AddressLine2: Optional[str] = None
+    Email: EmailStr
+    PhoneNumber: Optional[str] = None
+    Description: Optional[str] = None
+
+class UserUpdate(BaseModel):
+    TenantId: Optional[int] = None
+    BusinessId: Optional[int] = None
+    Role: Optional[str] = None
+    UserName: Optional[str] = None
+    Password: Optional[str] = None
+    Name: Optional[str] = None
+    AddressLine1: Optional[str] = None
+    AddressLine2: Optional[str] = None
+    Email: Optional[EmailStr] = None
+    PhoneNumber: Optional[str] = None
+    Description: Optional[str] = None
+
+class UserListResponse(BaseModel):
+    Id: int
+    UserName: str
+    Name: str
+    Email: EmailStr
+    Role: str
+    TenantId: int
+    BusinessId: Optional[int]
+    UserStatus: str
+    PhoneNumber: Optional[str] = None
+    businessName: Optional[str] = None
+    CreatedAt: datetime
+    ModifiedAt: datetime
+    
+    class Config:
+        from_attributes = True

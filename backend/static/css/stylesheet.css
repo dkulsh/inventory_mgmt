@@ -17,6 +17,14 @@
     --radius-lg: 0.75rem;
 }
 
+/* Avatar styles for user management */
+.avatar-sm {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
 body {
     background-color: var(--background-color);
     color: var(--text-primary);

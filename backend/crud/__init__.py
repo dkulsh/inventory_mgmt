@@ -21,6 +21,7 @@ __all__ = [
     'update_user',
     'delete_user',
     'get_user_by_username',
+    'get_available_businesses_for_user_creation',
     
     # Product functions
     'get_product',
@@ -53,8 +54,8 @@ def __getattr__(name):
         elif name.startswith(('get_business', 'create_business', 'update_business', 'delete_business')):
             from .business import get_business, get_businesses, create_business, update_business, delete_business
             return locals()[name]
-        elif name.startswith(('get_user', 'create_user', 'update_user', 'delete_user')):
-            from .user import get_user, get_users, create_user, update_user, delete_user, get_user_by_username
+        elif name.startswith(('get_user', 'create_user', 'update_user', 'delete_user', 'get_available_businesses_for_user_creation')):
+            from .user import get_user, get_users, create_user, update_user, delete_user, get_user_by_username, get_available_businesses_for_user_creation
             return locals()[name]
         elif name.startswith(('get_product', 'create_product', 'update_product', 'delete_product')):
             from .product import get_product, get_products, create_product, update_product, delete_product

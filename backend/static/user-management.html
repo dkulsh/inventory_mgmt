@@ -68,19 +68,57 @@
             </div>
         </nav>
 
-        <!-- Page Content -->
-        <div class="container-fluid p-4">
-            <div class="row mb-4">
-                <div class="col">
-                    <h4 class="mb-0">User Management</h4>
-                    <p class="text-muted">Manage users and their permissions</p>
+        <!-- Main Content -->
+        <div class="flex-grow-1">
+            <div class="d-flex justify-content-between align-items-center p-4 border-bottom bg-white shadow-sm">
+                <h2 class="fw-bold mb-0">Manage Users</h2>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary d-flex align-items-center shadow-hover" id="createUserBtn">
+                        <i class="bi bi-plus-lg me-2"></i> Create User
+                    </button>
                 </div>
             </div>
+            
+            <div class="p-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="flex-grow-1">
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="searchInput" 
+                                       placeholder="Search by Name, Username or Email"
+                                       aria-label="Search users">
+                            </div>
+                            <button class="btn btn-outline-secondary d-flex align-items-center">
+                                <i class="bi bi-funnel me-2"></i> Filter
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Content will be added here later -->
-            <div class="text-center text-muted mt-5">
-                <i class="bi bi-people" style="font-size: 3rem;"></i>
-                <p class="mt-3">User Management content will be added here</p>
+                <div class="card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0" id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Business</th>
+                                        <th>Phone</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <!-- Users will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -90,6 +128,8 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <!-- Custom JavaScript -->
 <script src="js/sidebar.js"></script>
+<script src="js/userManagement.js"></script>
+<script src="js/modals/userModal.js"></script>
 </body>
 </html>
 
