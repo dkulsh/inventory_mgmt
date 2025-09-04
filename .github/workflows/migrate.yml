@@ -12,10 +12,12 @@ env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   INSTANCE_NAME: inventory-mysql-prod
   DATABASE_NAME: inventory_mgmt
+  REGION: us-central1
 
 jobs:
   migrate:
     runs-on: ubuntu-latest
+    environment: production
     
     steps:
     - uses: actions/checkout@v4
