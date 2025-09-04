@@ -288,8 +288,19 @@ class UserModal {
         const roleSelect = document.getElementById('userRole');
         const businessSelect = document.getElementById('userBusiness');
         
+        // Determine TenantId based on user role and selected business
+        let tenantId = this.currentUser.TenantId; // Default to current user's tenant
+        
+        // For admin roles, derive TenantId from selected business
+        if (['SuperAdmin', 'TechAdmin', 'SalesAdmin'].includes(this.currentUser.Role) && businessSelect.value) {
+            const selectedBusiness = this.businesses.find(biz => biz.Id == businessSelect.value);
+            if (selectedBusiness) {
+                tenantId = selectedBusiness.TenantId;
+            }
+        }
+        
         const userData = {
-            TenantId: this.currentUser.TenantId, // Include current user's tenant ID
+            TenantId: tenantId,
             Name: formData.get('Name'),
             UserName: formData.get('UserName'),
             Email: formData.get('Email'),

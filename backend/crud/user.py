@@ -150,11 +150,20 @@ def get_available_businesses_for_user_creation(
     """
     Get businesses that can be selected when creating users based on current user's role
     """
+    # Start with base query filtering out deleted businesses
     query = db.query(models.Business).filter(
-        models.Business.TenantId == tenant_id,
         models.Business.isDeleted == False
     )
     
+    # Apply tenant filtering based on role
+    if current_user_role in ["SuperAdmin", "TechAdmin", "SalesAdmin"]:
+        # Admin roles can see businesses from all tenants (no tenant filtering)
+        pass
+    else:
+        # Other roles are restricted to their own tenant
+        query = query.filter(models.Business.TenantId == tenant_id)
+    
+    # Apply role-specific business filtering
     if current_user_role in ["DealerAdmin", "Dealer"]:
         # Can only create users for their own business
         query = query.filter(models.Business.Id == current_user_business_id)
@@ -166,6 +175,6 @@ def get_available_businesses_for_user_creation(
                 models.Business.Type == "DEALER"
             )
         )
-    # SuperAdmin, TechAdmin, SalesAdmin can select any business (no filtering)
+    # SuperAdmin, TechAdmin, SalesAdmin can select any business (no type filtering)
     
     return query.order_by(models.Business.Name).all()

@@ -44,7 +44,7 @@ def list_orders(
     type: Optional[str] = None,
     start_date: Optional[str] = None,
     end_date: Optional[str] = None,
-    tenant_id: Optional[int] = None
+    tenantId: Optional[int] = None
 ):
     check_role(user)
     
@@ -52,9 +52,9 @@ def list_orders(
     query = db.query(Order).filter(Order.isDeleted == False)
     
     # Apply tenant filter
-    if tenant_id:
+    if tenantId:
         if user.Role in {UserRoleEnum.SuperAdmin, UserRoleEnum.TechAdmin, UserRoleEnum.SalesAdmin}:
-            query = query.filter(Order.TenantId == tenant_id)
+            query = query.filter(Order.TenantId == tenantId)
         else:
             query = query.filter(Order.TenantId == user.TenantId)
     else:
@@ -146,7 +146,7 @@ def get_order(order_id: int, db: Session = Depends(get_db), user=Depends(get_cur
 
 @router.post("/", response_model=OrderCreateResponse, status_code=201)
 def create_order(order_request: OrderCreateRequest, db: Session = Depends(get_db), user=Depends(get_current_user)):
-    check_role(user, allowed_roles=ADMIN_ROLES)
+    check_role(user, allowed_roles=ALL_ROLES)
     
     from sqlalchemy.exc import SQLAlchemyError
     try:

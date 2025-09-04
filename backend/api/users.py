@@ -139,12 +139,15 @@ def create_user(
         # Set BusinessId to their own business
         user.BusinessId = current_user.BusinessId
     
-    # Validate that user can only create users in their own tenant
-    if user.TenantId != current_user.TenantId:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Cannot create users in other tenants"
-        )
+    # Validate tenant access based on user role
+    if current_user.Role not in ["SuperAdmin", "TechAdmin", "SalesAdmin"]:
+        # Non-admin roles can only create users in their own tenant
+        if user.TenantId != current_user.TenantId:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Cannot create users in other tenants"
+            )
+    # Admin roles (SuperAdmin, TechAdmin, SalesAdmin) can create users in any tenant
     
     # Set TenantId to current user's tenant (commented out since frontend now sends it)
     # user.TenantId = current_user.TenantId

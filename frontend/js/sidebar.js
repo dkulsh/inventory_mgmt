@@ -62,6 +62,16 @@ function applyRoleBasedVisibility(userRole) {
     const adminSubmenu = document.getElementById('adminSubmenu');
     const adminPanelToggle = document.getElementById('adminPanelToggle');
     
+    // Hide Products menu item for Dealers
+    const productsMenuItem = document.querySelector('a[href="products.html"]')?.closest('.nav-item');
+    if (productsMenuItem) {
+        if (['DealerAdmin', 'Dealer'].includes(userRole)) {
+            productsMenuItem.style.display = 'none';
+        } else {
+            productsMenuItem.style.display = 'block';
+        }
+    }
+    
     if (!adminSubmenu || !adminPanelToggle) {
         return;
     }
