@@ -10,7 +10,7 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
-  INSTANCE_NAME: inventory-mysql-dev
+  INSTANCE_NAME: inventory-mysql-prod
   DATABASE_NAME: inventory_mgmt
 
 jobs:
