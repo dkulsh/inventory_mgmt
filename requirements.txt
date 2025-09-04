@@ -9,3 +9,4 @@ google-cloud-storage
 python-multipart
 Jinja2
 email-validator
+python-dotenv
