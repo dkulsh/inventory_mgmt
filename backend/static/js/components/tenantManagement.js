@@ -14,6 +14,16 @@ class TenantManagement {
     }
 
     setupEventListeners() {
+        // Create Tenant button handler
+        const createBtn = document.getElementById('createTenantBtn');
+        if (createBtn) {
+            createBtn.addEventListener('click', () => {
+                if (window.tenantModal) {
+                    window.tenantModal.show();
+                }
+            });
+        }
+
         // Search input handler
         const searchInput = document.getElementById('tenantSearch');
         if (searchInput) {
@@ -88,15 +98,12 @@ class TenantManagement {
                 <td>${formatDate(tenant.TenantStartDateTime)}</td>
                 <td>${formatDate(tenant.TenantEndDateTime)}</td>
                 <td>
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-sm btn-info" onclick="tenantManagement.viewTenantDetails(${tenant.TenantId})">
-                            <i class="bi bi-eye"></i> Manage
+                    <div class="d-flex gap-1">
+                        <button class="btn btn-sm btn-outline-primary" onclick="tenantManagement.editTenant(${tenant.TenantId})" title="Edit Tenant">
+                            <i class="bi bi-pencil"></i>
                         </button>
-                        <button type="button" class="btn btn-sm btn-primary" onclick="tenantManagement.editTenant(${tenant.TenantId})">
-                            <i class="bi bi-pencil"></i> Edit
-                        </button>
-                        <button type="button" class="btn btn-sm btn-danger" onclick="tenantManagement.deleteTenant(${tenant.TenantId})">
-                            <i class="bi bi-trash"></i> Delete
+                        <button class="btn btn-sm btn-outline-danger" onclick="tenantManagement.deleteTenant(${tenant.TenantId})" title="Delete Tenant">
+                            <i class="bi bi-trash"></i>
                         </button>
                     </div>
                 </td>
@@ -289,39 +296,7 @@ class TenantManagement {
         }, 0);
     }
 
-    async viewTenantDetails(tenantId) {
-        console.log('viewTenantDetails called with tenantId:', tenantId);
-        try {
-            const token = localStorage.getItem('access_token');
-            console.log('Token available:', !!token);
-            
-            console.log('Making API call to:', `/api/v1/tenants/${tenantId}`);
-            const response = await fetch(`/api/v1/tenants/${tenantId}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
 
-            console.log('API Response status:', response.status);
-            if (!response.ok) {
-                throw new Error('Failed to fetch tenant details');
-            }
-
-            const tenantData = await response.json();
-            console.log('Received tenant data:', tenantData);
-            
-            // Store the tenant data in sessionStorage for the detail page to use
-            sessionStorage.setItem('currentTenant', JSON.stringify(tenantData));
-            console.log('Stored tenant data in sessionStorage');
-            
-            // Navigate to the frontend route
-            console.log('Navigating to:', `/tenants/${tenantId}`);
-            window.location.href = `/tenants/${tenantId}`;
-        } catch (error) {
-            console.error('Error in viewTenantDetails:', error);
-            showToast('Error fetching tenant details', 'error');
-        }
-    }
 }
 
 // Utility functions
@@ -355,10 +330,44 @@ function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString();
 }
 
-function showToast(message, type = 'info') {
-    // Implementation depends on your toast library
-    console.log(`${type.toUpperCase()}: ${message}`);
+function showToast(msg, success=true) {
+    let toast = document.getElementById('globalToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'globalToast';
+        toast.className = `toast align-items-center text-white bg-${success ? 'success' : 'danger'} border-0 position-fixed bottom-0 end-0 m-4`;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+        toast.style.zIndex = '3000';
+        toast.style.minWidth = '200px';
+        
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">${msg}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        `;
+        document.body.appendChild(toast);
+    } else {
+        toast.querySelector('.toast-body').textContent = msg;
+        toast.className = `toast align-items-center text-white bg-${success ? 'success' : 'danger'} border-0 position-fixed bottom-0 end-0 m-4`;
+    }
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
 }
 
 // Export the class
-window.TenantManagement = TenantManagement; 
+window.TenantManagement = TenantManagement;
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    window.tenantManagement = new TenantManagement();
+    window.tenantManagement.initialize();
+});
+
+// Logout function
+function logout() {
+    localStorage.removeItem('access_token');
+    window.location.href = '/static/login.html';
+} 

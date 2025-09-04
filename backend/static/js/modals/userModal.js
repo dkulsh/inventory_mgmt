@@ -21,21 +21,17 @@ class UserModal {
                         </div>
                         <div class="modal-body">
                             <form id="userForm">
+                                <!-- Name (Full Width) -->
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <div class="mb-3">
                                             <label for="userName" class="form-label">Name <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" id="userName" name="Name" required>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="userUsername" class="form-label">Username <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="userUsername" name="UserName" required>
-                                        </div>
-                                    </div>
                                 </div>
                                 
+                                <!-- Email and Phone Number -->
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
@@ -51,7 +47,14 @@ class UserModal {
                                     </div>
                                 </div>
                                 
+                                <!-- Username and Password -->
                                 <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="userUsername" class="form-label">Username <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="userUsername" name="UserName" required>
+                                        </div>
+                                    </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="userPassword" class="form-label">Password <span class="text-danger">*</span></label>
@@ -59,6 +62,10 @@ class UserModal {
                                             <div class="form-text" id="passwordHelp">Leave blank to keep current password when editing</div>
                                         </div>
                                     </div>
+                                </div>
+                                
+                                <!-- Role and Business -->
+                                <div class="row">
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label for="userRole" class="form-label">Role <span class="text-danger">*</span></label>
@@ -67,42 +74,12 @@ class UserModal {
                                             </select>
                                         </div>
                                     </div>
-                                </div>
-                                
-                                <div class="row" id="businessRow">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6" id="businessRow">
                                         <div class="mb-3">
                                             <label for="userBusiness" class="form-label">Business</label>
                                             <select class="form-select" id="userBusiness" name="BusinessId">
                                                 <option value="">Select Business</option>
                                             </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="mb-3">
-                                            <label for="userAddress1" class="form-label">Address Line 1</label>
-                                            <input type="text" class="form-control" id="userAddress1" name="AddressLine1">
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="mb-3">
-                                            <label for="userAddress2" class="form-label">Address Line 2</label>
-                                            <input type="text" class="form-control" id="userAddress2" name="AddressLine2">
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="mb-3">
-                                            <label for="userDescription" class="form-label">Description</label>
-                                            <textarea class="form-control" id="userDescription" name="Description" rows="3"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -289,9 +266,6 @@ class UserModal {
             document.getElementById('userPhone').value = user.PhoneNumber || '';
             document.getElementById('userRole').value = user.Role;
             document.getElementById('userBusiness').value = user.BusinessId || '';
-            document.getElementById('userAddress1').value = user.AddressLine1 || '';
-            document.getElementById('userAddress2').value = user.AddressLine2 || '';
-            document.getElementById('userDescription').value = user.Description || '';
             
         } catch (error) {
             console.error('Error loading user data:', error);
@@ -321,10 +295,7 @@ class UserModal {
             Email: formData.get('Email'),
             PhoneNumber: formData.get('PhoneNumber') || null,
             Role: roleSelect.value, // Get directly from DOM element
-            BusinessId: businessSelect.value ? parseInt(businessSelect.value) : null, // Get directly from DOM element
-            AddressLine1: formData.get('AddressLine1') || null,
-            AddressLine2: formData.get('AddressLine2') || null,
-            Description: formData.get('Description') || null
+            BusinessId: businessSelect.value ? parseInt(businessSelect.value) : null // Get directly from DOM element
         };
         
         // Add password if provided (for create) or if editing and password is provided

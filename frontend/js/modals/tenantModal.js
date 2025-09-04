@@ -59,21 +59,17 @@ class TenantModal {
                                     <div class="col-md-6">
                                         <label for="startDateTime" class="form-label">Start Date</label>
                                         <input type="datetime-local" class="form-control" id="startDateTime" name="TenantStartDateTime"
-                                            value="${this.currentTenant?.TenantStartDateTime ? new Date(this.currentTenant.TenantStartDateTime).toISOString().slice(0, 16) : ''}">
+                                            value="${this.currentTenant?.TenantStartDateTime ? new Date(this.currentTenant.TenantStartDateTime).toISOString().slice(0, 16) : new Date().toISOString().slice(0, 16)}">
                                     </div>
                                     <div class="col-md-6">
                                         <label for="endDateTime" class="form-label">End Date</label>
                                         <input type="datetime-local" class="form-control" id="endDateTime" name="TenantEndDateTime"
-                                            value="${this.currentTenant?.TenantEndDateTime ? new Date(this.currentTenant.TenantEndDateTime).toISOString().slice(0, 16) : ''}">
+                                            value="${this.currentTenant?.TenantEndDateTime ? new Date(this.currentTenant.TenantEndDateTime).toISOString().slice(0, 16) : '9999-12-31T23:59'}">
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="tenantDescription" class="form-label">Description</label>
                                     <textarea class="form-control" id="tenantDescription" name="TenantDescription" rows="3">${this.currentTenant?.TenantDescription || ''}</textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="additionalData" class="form-label">Additional Data (JSON)</label>
-                                    <textarea class="form-control" id="additionalData" name="AdditionalData" rows="3">${this.currentTenant?.AdditionalData ? JSON.stringify(this.currentTenant.AdditionalData, null, 2) : ''}</textarea>
                                 </div>
                             </form>
                         </div>
@@ -139,17 +135,6 @@ class TenantModal {
             TenantDescription: formData.get('TenantDescription') || null
         };
 
-        // Parse additional data if provided
-        const additionalData = formData.get('AdditionalData');
-        if (additionalData) {
-            try {
-                tenantData.AdditionalData = JSON.parse(additionalData);
-            } catch (e) {
-                showToast('Invalid JSON in Additional Data', 'error');
-                return;
-            }
-        }
-
         let success;
         if (this.currentTenant) {
             success = await window.tenantManagement.updateTenant(this.currentTenant.TenantId, tenantData);
@@ -164,4 +149,9 @@ class TenantModal {
 }
 
 // Export the class
-window.TenantModal = TenantModal; 
+window.TenantModal = TenantModal;
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    window.tenantModal = new TenantModal();
+}); 
