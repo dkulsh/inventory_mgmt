@@ -17,6 +17,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (response.ok) {
                     const data = await response.json();
                     localStorage.setItem('access_token', data.access_token);
+                    
+                    // Fetch and store user information
+                    try {
+                        const userResponse = await fetch('/api/v1/users/me', {
+                            headers: {
+                                'Authorization': `Bearer ${data.access_token}`
+                            }
+                        });
+                        
+                        if (userResponse.ok) {
+                            const userInfo = await userResponse.json();
+                            localStorage.setItem('user_role', userInfo.Role);
+                            localStorage.setItem('tenant_id', userInfo.TenantId);
+                            localStorage.setItem('business_id', userInfo.BusinessId || '');
+                        }
+                    } catch (error) {
+                        console.error('Failed to fetch user info:', error);
+                    }
+                    
                     window.location.href = 'products.html';
                 } else {
                     const err = await response.json();
