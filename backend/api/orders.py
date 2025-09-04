@@ -60,6 +60,10 @@ def list_orders(
     else:
         query = query.filter(Order.TenantId == user.TenantId)
     
+    # Apply business filter for Dealers and DealerAdmins
+    if user.Role in {UserRoleEnum.Dealer, UserRoleEnum.DealerAdmin}:
+        query = query.filter(Order.BusinessId == user.BusinessId)
+    
     # Apply type filter
     if type:
         query = query.filter(Order.Type == type)
@@ -116,7 +120,23 @@ def list_orders(
 @router.get("/{order_id}", response_model=OrderResponse)
 def get_order(order_id: int, db: Session = Depends(get_db), user=Depends(get_current_user)):
     check_role(user)
-    order = db.query(Order).filter(Order.Id == order_id, Order.isDeleted == False).first()
+    
+    # Base query with tenant filter
+    query = db.query(Order).filter(Order.Id == order_id, Order.isDeleted == False)
+    
+    # Apply tenant filter
+    if user.Role in {UserRoleEnum.SuperAdmin, UserRoleEnum.TechAdmin, UserRoleEnum.SalesAdmin}:
+        # SuperAdmins, TechAdmins, and SalesAdmins can access orders from any tenant
+        pass
+    else:
+        # All other roles are restricted to their tenant
+        query = query.filter(Order.TenantId == user.TenantId)
+    
+    # Apply business filter for Dealers and DealerAdmins
+    if user.Role in {UserRoleEnum.Dealer, UserRoleEnum.DealerAdmin}:
+        query = query.filter(Order.BusinessId == user.BusinessId)
+    
+    order = query.first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     ordered_products = db.query(OrderedProduct).filter(OrderedProduct.OrderId == order.Id, OrderedProduct.isDeleted == False).all()
@@ -287,12 +307,25 @@ def update_order_status(
 ):
     check_role(user, allowed_roles=ADMIN_ROLES)
     
-    # Get the order
-    order = db.query(Order).filter(
+    # Get the order with proper filtering
+    query = db.query(Order).filter(
         Order.Id == order_id,
         Order.isDeleted == False
-    ).first()
+    )
     
+    # Apply tenant filter
+    if user.Role in {UserRoleEnum.SuperAdmin, UserRoleEnum.TechAdmin, UserRoleEnum.SalesAdmin}:
+        # SuperAdmins, TechAdmins, and SalesAdmins can access orders from any tenant
+        pass
+    else:
+        # All other roles are restricted to their tenant
+        query = query.filter(Order.TenantId == user.TenantId)
+    
+    # Apply business filter for Dealers and DealerAdmins
+    if user.Role in {UserRoleEnum.Dealer, UserRoleEnum.DealerAdmin}:
+        query = query.filter(Order.BusinessId == user.BusinessId)
+    
+    order = query.first()
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
     

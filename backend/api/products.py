@@ -17,6 +17,8 @@ ALLOWED_ROLES = {
     UserRoleEnum.SalesAdmin,
     UserRoleEnum.WholesalerAdmin,
     UserRoleEnum.Wholesaler,
+    UserRoleEnum.DealerAdmin,
+    UserRoleEnum.Dealer,
 }
 
 def check_role(user, allowed_roles=ALLOWED_ROLES):

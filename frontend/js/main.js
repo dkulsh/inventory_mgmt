@@ -117,9 +117,13 @@ async function fetchAndRenderProducts(search = '') {
                 <td>
                     <img src="${product.ImageLink || '/static/images/placeholder.png'}" 
                          alt="img" 
+                         class="product-image-thumbnail"
                          style="width:40px;height:40px;border-radius:8px;object-fit:cover;"
                          data-retry-count="0"
-                         onerror="handleImageError(this, ${product.Id})">
+                         data-product-name="${product.Name || 'Product'}"
+                         data-image-url="${product.ImageLink || '/static/images/placeholder.png'}"
+                         onerror="handleImageError(this, ${product.Id})"
+                         onclick="showImagePreview('${product.ImageLink || '/static/images/placeholder.png'}', '${(product.Name || 'Product').replace(/'/g, "\\'")}')">
                 </td>
                 <td>${product.ProductId}</td>
                 <td>${product.Name}</td>
@@ -533,21 +537,84 @@ function showToast(msg, success=true) {
     bsToast.show();
 }
 
-// New Dialog Modal logic
-const newDialogBtn = document.getElementById('newDialogBtn');
-if (newDialogBtn) {
-    newDialogBtn.onclick = function() {
-        const modal = new bootstrap.Modal(document.getElementById('newDialogModal'));
-        modal.show();
+
+// Image Preview Modal functionality
+function showImagePreview(imageUrl, productName) {
+    // Skip preview for placeholder images
+    if (imageUrl.includes('placeholder.png')) {
+        showToast('No image available for this product', false);
+        return;
+    }
+
+    // Create or get existing modal
+    let modal = document.getElementById('imagePreviewModal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'imagePreviewModal';
+        modal.className = 'modal fade image-preview-modal';
+        modal.setAttribute('tabindex', '-1');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(modal);
+    }
+
+    // Modal HTML with loading state
+    modal.innerHTML = `
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">${productName}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="loading-spinner" id="imageLoadingSpinner">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="ms-2">Loading image...</div>
+                    </div>
+                    <div class="error-message" id="imageErrorMessage" style="display: none;">
+                        <i class="bi bi-image"></i>
+                        <p>Failed to load image</p>
+                        <small class="text-muted">The image may be unavailable or corrupted</small>
+                    </div>
+                    <img class="preview-image" id="previewImage" style="display: none;" alt="${productName}">
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Show modal
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
+
+    // Load the image
+    const previewImg = modal.querySelector('#previewImage');
+    const loadingSpinner = modal.querySelector('#imageLoadingSpinner');
+    const errorMessage = modal.querySelector('#imageErrorMessage');
+
+    // Create new image to test loading
+    const testImg = new Image();
+    
+    testImg.onload = function() {
+        // Image loaded successfully
+        previewImg.src = imageUrl;
+        previewImg.style.display = 'block';
+        loadingSpinner.style.display = 'none';
     };
-}
-const saveNewDialogBtn = document.getElementById('saveNewDialogBtn');
-if (saveNewDialogBtn) {
-    saveNewDialogBtn.onclick = function() {
-        // Just close the modal, no backend integration
-        const modal = bootstrap.Modal.getInstance(document.getElementById('newDialogModal'));
-        modal.hide();
+
+    testImg.onerror = function() {
+        // Image failed to load
+        loadingSpinner.style.display = 'none';
+        errorMessage.style.display = 'block';
     };
+
+    // Start loading the image
+    testImg.src = imageUrl;
+
+    // Clean up modal when hidden
+    modal.addEventListener('hidden.bs.modal', function() {
+        modal.remove();
+    });
 }
 
 // Logout function
