@@ -316,7 +316,7 @@ class UserModal {
         }
         
         try {
-            const url = this.isEditMode ? `/api/v1/users/${this.editingUserId}` : '/api/v1/users';
+            const url = this.isEditMode ? `/api/v1/users/${this.editingUserId}` : '/api/v1/users/';
             const method = this.isEditMode ? 'PUT' : 'POST';
             
             const response = await fetch(url, {

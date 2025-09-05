@@ -117,7 +117,7 @@ class BusinessManagement {
                 params.append('type', type);
             }
             
-            const response = await fetch(`/api/v1/businesses?${params}`, {
+            const response = await fetch(`/api/v1/businesses/?${params}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('access_token')}`
                 }

@@ -50,7 +50,7 @@ async function initializeDropdowns(userRole, tenantId, businessId) {
 // Load tenants into dropdown
 async function loadTenants(selectElement, selectedTenantId = null) {
     try {
-        const response = await fetch('/api/v1/tenants', {
+        const response = await fetch('/api/v1/tenants/', {
             headers: authHeaders()
         });
         if (response.ok) {
@@ -101,7 +101,7 @@ async function loadDealers(selectElement, tenantId, selectedDealerId = null) {
             return;
         }
 
-        const response = await fetch(`/api/v1/businesses?tenantId=${tenantId}&type=DEALER`, {
+        const response = await fetch(`/api/v1/businesses/?tenantId=${tenantId}&type=DEALER`, {
             headers: authHeaders()
         });
         if (response.ok) {

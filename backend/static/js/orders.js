@@ -191,7 +191,7 @@ async function fetchOrders() {
         endDate: currentDateRange.endDate
     });
     
-    const response = await fetch(`/api/v1/orders?${queryParams}`, {
+    const response = await fetch(`/api/v1/orders/?${queryParams}`, {
         headers: authHeaders()
     });
     if (!response.ok) {
