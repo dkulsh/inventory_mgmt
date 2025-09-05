@@ -60,7 +60,7 @@ class BusinessManagement {
 
     async loadTenants() {
         try {
-            const response = await fetch('/api/v1/tenants', {
+            const response = await fetch('/api/v1/tenants/', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('access_token')}`
                 }

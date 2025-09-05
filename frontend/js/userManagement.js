@@ -53,7 +53,7 @@ class UserManagement {
                 params.append('search', search);
             }
             
-            const response = await fetch(`/api/v1/users?${params}`, {
+            const response = await fetch(`/api/v1/users/?${params}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('access_token')}`
                 }

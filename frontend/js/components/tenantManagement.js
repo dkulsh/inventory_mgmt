@@ -56,7 +56,7 @@ class TenantManagement {
             });
 
             console.log('Fetching tenants with params:', queryParams.toString());
-            const response = await fetch(`/api/v1/tenants?${queryParams}`, {
+            const response = await fetch(`/api/v1/tenants/?${queryParams}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -149,7 +149,7 @@ class TenantManagement {
     async createTenant(tenantData) {
         try {
             const token = localStorage.getItem('access_token');
-            const response = await fetch('/api/v1/tenants', {
+            const response = await fetch('/api/v1/tenants/', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
