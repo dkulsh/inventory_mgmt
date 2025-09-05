@@ -7,9 +7,11 @@ from backend.models import Product, UserRoleEnum
 from backend.auth import get_current_user
 from backend.database import get_db
 from backend.gcs_utils import upload_product_image, generate_signed_url
+from backend.logging_config import get_logger, log_error
 import os
 
 router = APIRouter()
+logger = get_logger("products")
 
 ALLOWED_ROLES = {
     UserRoleEnum.SuperAdmin,
@@ -92,13 +94,79 @@ def delete_product(product_id: int, db: Session = Depends(get_db), user=Depends(
 @router.post("/upload-image")
 def upload_image(
     tenantId: int = Form(...),
-    file: UploadFile = File(...)
+    file: UploadFile = File(...),
+    user=Depends(get_current_user)
 ):
+    """Upload product image to Google Cloud Storage"""
+    
+    # Log upload attempt
+    logger.info(f"Image upload attempt started", extra={
+        "extra_fields": {
+            "upload": {
+                "tenant_id": tenantId,
+                "filename": file.filename,
+                "content_type": file.content_type,
+                "file_size": file.size if hasattr(file, 'size') else 'unknown',
+                "user_id": user.Id if user else None
+            }
+        }
+    })
+    
     try:
+        # Validate file
+        if not file.filename:
+            logger.warning("Upload failed: No filename provided")
+            raise HTTPException(status_code=400, detail="No filename provided")
+        
+        if not file.content_type or not file.content_type.startswith('image/'):
+            logger.warning(f"Upload failed: Invalid file type - {file.content_type}")
+            raise HTTPException(status_code=400, detail="File must be an image")
+        
+        # Check file size (limit to 10MB)
+        if hasattr(file, 'size') and file.size and file.size > 10 * 1024 * 1024:
+            logger.warning(f"Upload failed: File too large - {file.size} bytes")
+            raise HTTPException(status_code=400, detail="File size must be less than 10MB")
+        
+        # Validate tenant access
+        if user.TenantId != tenantId and user.Role not in ["SuperAdmin", "TechAdmin", "SalesAdmin"]:
+            logger.warning(f"Upload failed: User {user.Id} attempted to upload to tenant {tenantId} but belongs to tenant {user.TenantId}")
+            raise HTTPException(status_code=403, detail="Cannot upload to different tenant")
+        
+        logger.info(f"Starting GCS upload for tenant {tenantId}")
+        
+        # Upload to GCS
         result = upload_product_image(file, tenantId, file.filename)
+        
+        logger.info(f"Image upload successful", extra={
+            "extra_fields": {
+                "upload_result": {
+                    "tenant_id": tenantId,
+                    "filename": file.filename,
+                    "gcs_path": result.get("path"),
+                    "signed_url": result.get("url")[:100] + "..." if result.get("url") else None
+                }
+            }
+        })
+        
         return result
+        
+    except HTTPException:
+        # Re-raise HTTP exceptions as they are already properly formatted
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        # Log the error with context
+        log_error(
+            logger,
+            e,
+            context=f"Image upload failed for tenant {tenantId}",
+            extra_data={
+                "tenant_id": tenantId,
+                "filename": file.filename,
+                "content_type": file.content_type,
+                "user_id": user.Id if user else None
+            }
+        )
+        raise HTTPException(status_code=500, detail=f"Image upload failed: {str(e)}")
 
 @router.post("/refresh-image-url/{product_id}")
 def refresh_image_url(
