@@ -8,7 +8,7 @@ def validate_environment():
     
     required_vars = {
         'GCS_BUCKET_NAME': 'Google Cloud Storage bucket name',
-        'GOOGLE_APPLICATION_CREDENTIALS': 'Path to Google Cloud service account JSON file',
+        'GCP_SA_KEY': 'Google Cloud service account JSON key',
         'JWT_SECRET_KEY': 'JWT secret key for token signing',
         'DB_HOST': 'Database host',
         'DB_USER': 'Database username',
@@ -29,9 +29,14 @@ def validate_environment():
             logger.info(f"✓ {var} is set")
             
             # Additional validation for specific variables
-            if var == 'GOOGLE_APPLICATION_CREDENTIALS' and not os.path.exists(value):
-                invalid_vars.append(f"{var} - File not found at {value}")
-                logger.error(f"Google Cloud credentials file not found: {value}")
+            if var == 'GCP_SA_KEY':
+                try:
+                    import json
+                    json.loads(value)  # Validate JSON format
+                    logger.info(f"✓ {var} contains valid JSON")
+                except json.JSONDecodeError:
+                    invalid_vars.append(f"{var} - Invalid JSON format")
+                    logger.error(f"GCP_SA_KEY contains invalid JSON")
             elif var == 'GCS_BUCKET_NAME' and not value.strip():
                 invalid_vars.append(f"{var} - Empty value")
                 logger.error(f"GCS_BUCKET_NAME is empty")
@@ -63,10 +68,14 @@ def validate_gcs_connection():
     """Validate Google Cloud Storage connection"""
     try:
         from google.cloud import storage
+        from backend.credentials_setup import setup_google_credentials
         
         bucket_name = os.getenv('GCS_BUCKET_NAME')
         if not bucket_name:
             return False, "GCS_BUCKET_NAME not set"
+        
+        # Setup credentials first
+        setup_google_credentials()
         
         logger.info(f"Testing GCS connection to bucket: {bucket_name}")
         
@@ -104,10 +113,10 @@ def log_environment_summary():
     
     # Log GCS configuration
     gcs_bucket = os.getenv('GCS_BUCKET_NAME', 'not set')
-    gcs_creds = os.getenv('GOOGLE_APPLICATION_CREDENTIALS', 'not set')
+    gcp_sa_key_set = "✓" if os.getenv('GCP_SA_KEY') else "✗"
     
     logger.info(f"GCS Bucket: {gcs_bucket}")
-    logger.info(f"GCS Credentials: {gcs_creds}")
+    logger.info(f"GCP Service Account Key: {gcp_sa_key_set}")
     
     # Log JWT configuration
     jwt_secret_set = "✓" if os.getenv('JWT_SECRET_KEY') else "✗"

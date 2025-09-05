@@ -87,8 +87,8 @@ Failed to upload image for tenant 1
 **Solution**: Ensure `GCS_BUCKET_NAME` is set in your environment
 
 ### 2. Invalid GCS Credentials
-**Error**: `Google Cloud credentials not found or invalid`
-**Solution**: Check that `GOOGLE_APPLICATION_CREDENTIALS` points to a valid service account JSON file
+**Error**: `GCP_SA_KEY contains invalid JSON` or `Failed to create credentials file`
+**Solution**: Check that `GCP_SA_KEY` contains valid JSON content of your service account key
 
 ### 3. Bucket Access Issues
 **Error**: `GCS bucket not found or is not accessible`
@@ -107,7 +107,7 @@ Failed to upload image for tenant 1
 Make sure these are set in your production environment:
 ```bash
 GCS_BUCKET_NAME=your-bucket-name
-GOOGLE_APPLICATION_CREDENTIALS=/app/service-account.json
+GCP_SA_KEY={"type":"service_account","project_id":"your-project",...}  # Full JSON content
 JWT_SECRET_KEY=your-secret-key
 DB_HOST=your-db-host
 DB_USER=your-db-user
@@ -115,6 +115,8 @@ DB_NAME=your-db-name
 ENVIRONMENT=production
 LOG_LEVEL=INFO
 ```
+
+**Note**: The `GCP_SA_KEY` should contain the entire JSON content of your service account key file, not a file path.
 
 ## Testing the Fix
 

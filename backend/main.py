@@ -5,6 +5,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from backend.api import products, orders, users, tenants, businesses
 from backend.logging_config import setup_logging, get_logger, log_request, log_response, log_error
 from backend.env_validation import validate_environment, validate_gcs_connection, log_environment_summary
+from backend.credentials_setup import setup_google_credentials, validate_google_credentials
 import os
 import time
 from dotenv import load_dotenv
@@ -27,6 +28,24 @@ if not is_valid:
         exit(1)
 else:
     logger.info("Environment validation passed")
+
+# Setup Google Cloud credentials
+logger.info("Setting up Google Cloud credentials")
+try:
+    setup_google_credentials()
+    logger.info("Google Cloud credentials setup successful")
+except Exception as e:
+    logger.error(f"Failed to setup Google Cloud credentials: {str(e)}")
+    if environment == "production":
+        logger.error("Exiting due to credentials setup failure in production")
+        exit(1)
+
+# Validate Google Cloud credentials
+if not validate_google_credentials():
+    logger.error("Google Cloud credentials validation failed")
+    if environment == "production":
+        logger.error("Exiting due to credentials validation failure in production")
+        exit(1)
 
 # Log environment summary
 log_environment_summary()

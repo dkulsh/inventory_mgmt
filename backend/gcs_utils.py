@@ -3,6 +3,7 @@ import uuid
 from google.cloud import storage
 from datetime import datetime, timedelta
 from backend.logging_config import get_logger, log_error
+from backend.credentials_setup import setup_google_credentials
 
 logger = get_logger("gcs_utils")
 
@@ -11,6 +12,9 @@ def generate_signed_url(bucket_name: str, blob_path: str) -> str:
     logger.info(f"Generating signed URL for {blob_path} in bucket {bucket_name}")
     
     try:
+        # Setup credentials if needed
+        setup_google_credentials()
+        
         client = storage.Client()
         bucket = client.bucket(bucket_name)
         blob = bucket.blob(blob_path)
@@ -61,11 +65,8 @@ def upload_product_image(upload_file, tenant_id, filename):
             logger.error("GCS_BUCKET_NAME environment variable not set")
             raise Exception('GCS_BUCKET_NAME not set')
         
-        # Validate Google Cloud credentials
-        credentials_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
-        if not credentials_path or not os.path.exists(credentials_path):
-            logger.error(f"Google Cloud credentials not found at {credentials_path}")
-            raise Exception('Google Cloud credentials not found or invalid')
+        # Setup Google Cloud credentials
+        setup_google_credentials()
         
         logger.info(f"Using GCS bucket: {bucket_name}")
         
@@ -128,7 +129,7 @@ def upload_product_image(upload_file, tenant_id, filename):
                 "filename": filename,
                 "content_type": upload_file.content_type,
                 "bucket_name": bucket_name,
-                "credentials_path": os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+                "gcp_sa_key_set": "✓" if os.getenv('GCP_SA_KEY') else "✗"
             }
         )
         raise
