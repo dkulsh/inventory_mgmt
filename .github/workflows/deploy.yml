@@ -62,28 +62,10 @@ jobs:
     
     - name: Deploy to Cloud Run
       run: |
-        # Create a temporary file for environment variables
-        cat > env_vars.yaml << EOF
-        env:
-        - name: ENVIRONMENT
-          value: "production"
-        - name: DB_HOST
-          value: "${{ secrets.DB_HOST }}"
-        - name: DB_USER
-          value: "${{ secrets.DB_USER }}"
-        - name: DB_PASSWORD
-          value: "${{ secrets.DB_PASSWORD }}"
-        - name: DB_NAME
-          value: "${{ secrets.DB_NAME }}"
-        - name: GCS_BUCKET_NAME
-          value: "${{ secrets.GCS_BUCKET_NAME }}"
-        - name: JWT_SECRET_KEY
-          value: "${{ secrets.JWT_SECRET_KEY }}"
-        - name: GCP_SA_KEY
-          value: |
-            ${{ secrets.GCP_SA_KEY }}
-        EOF
+        # Write GCP_SA_KEY to a temporary file to avoid shell escaping issues
+        echo '${{ secrets.GCP_SA_KEY }}' > gcp_sa_key.json
         
+        # Deploy with individual environment variables
         gcloud run deploy $SERVICE \
           --image gcr.io/$PROJECT_ID/$SERVICE:$GITHUB_SHA \
           --platform managed \
@@ -95,7 +77,14 @@ jobs:
           --min-instances 0 \
           --port 8080 \
           --add-cloudsql-instances=${{ secrets.DB_HOST }} \
-          --env-vars-file=env_vars.yaml
+          --set-env-vars="ENVIRONMENT=production" \
+          --set-env-vars="DB_HOST=${{ secrets.DB_HOST }}" \
+          --set-env-vars="DB_USER=${{ secrets.DB_USER }}" \
+          --set-env-vars="DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
+          --set-env-vars="DB_NAME=${{ secrets.DB_NAME }}" \
+          --set-env-vars="GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}" \
+          --set-env-vars="JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}" \
+          --set-env-vars="GCP_SA_KEY=$(cat gcp_sa_key.json)"
     
     - name: Run Database Migrations
       run: |
