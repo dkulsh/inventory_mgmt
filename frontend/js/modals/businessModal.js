@@ -252,7 +252,7 @@ class BusinessModal {
         };
         
         try {
-            const url = this.isEditMode ? `/api/v1/businesses/${this.editingBusinessId}` : '/api/v1/businesses';
+            const url = this.isEditMode ? `/api/v1/businesses/${this.editingBusinessId}` : '/api/v1/businesses/';
             const method = this.isEditMode ? 'PUT' : 'POST';
             
             const response = await fetch(url, {
