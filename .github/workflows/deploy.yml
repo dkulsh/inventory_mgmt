@@ -73,7 +73,7 @@ jobs:
           --min-instances 0 \
           --port 8080 \
           --add-cloudsql-instances=${{ secrets.DB_HOST }} \
-          --set-env-vars="ENVIRONMENT=production,DB_HOST=${{ secrets.DB_HOST }},DB_USER=${{ secrets.DB_USER }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_NAME=${{ secrets.DB_NAME }},GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }},JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}"
+          --set-env-vars="ENVIRONMENT=production,DB_HOST=${{ secrets.DB_HOST }},DB_USER=${{ secrets.DB_USER }},DB_PASSWORD=${{ secrets.DB_PASSWORD }},DB_NAME=${{ secrets.DB_NAME }},GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }},JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }},GCP_SA_KEY=${{ secrets.GCP_SA_KEY }}"
     
     - name: Run Database Migrations
       run: |

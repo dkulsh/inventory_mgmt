@@ -83,3 +83,9 @@ service-account.json
 
 # Cursor
 .cursor/
+
+# Specific files to exclude
+alembic/versions/5edea07755d8_clean_schema_with_initial_data.py
+alembic/versions/d7e99e83fd10_add_initial_tenant_and_techadmin.py
+cloud_sql_proxy
+test_clean_migration.py
