@@ -73,7 +73,7 @@ async function initializeTenantSelection() {
 // Load tenants into dropdown
 async function loadTenants(selectElement, selectedTenantId = null) {
     try {
-        const response = await fetch('/api/v1/tenants', {
+        const response = await fetch('/api/v1/tenants/', {
             headers: authHeaders()
         });
         if (response.ok) {
@@ -441,7 +441,7 @@ function getUserTenantId() {
 
 // API helper functions
 async function fetchTenants() {
-    const response = await fetch('/api/v1/tenants');
+    const response = await fetch('/api/v1/tenants/');
     if (!response.ok) {
         throw new Error('Failed to fetch tenants');
     }
